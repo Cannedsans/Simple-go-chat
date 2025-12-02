@@ -3,12 +3,12 @@ package handlers
 
 func HandleMessages(){
 	for{
-		msg := <- broacast
+		msg := <-broadcast
 
-		for clients := range client{
-			if err := clients.WriteJSON(&msg); err != nil{
-				delete(client, clients)
-				clients.Close()
+		for client := range clients{
+			if err := client.WriteJSON(&msg); err != nil{
+				delete(clients, client)
+				client.Close()
 			}
 		}
 	}

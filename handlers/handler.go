@@ -6,16 +6,19 @@ import (
 )
 
 type Message struct {
-	Username string `json:username`
-	Message  string `json:message`
+    Username string `json:"username"`
+    Message  string `json:"message"`
 }
+
+
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
-var broacast = make(chan Message)
-var client = make(map[*websocket.Conn]bool)
+var broadcast = make(chan Message)
+var clients = make(map[*websocket.Conn]bool)
+
 
 func HandleWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -25,15 +28,15 @@ func HandleWebSocket(c *gin.Context) {
 	}
 
 	defer conn.Close()
-	client[conn] = true
+	clients[conn] = true
 
 	for {
 		var msg Message
 		if err := conn.ReadJSON(&msg); err != nil {
-			delete(client, conn)
+			delete(clients, conn)
 			break
 		}
 
-		broacast <- msg
+		broadcast <- msg
 	}
 }
