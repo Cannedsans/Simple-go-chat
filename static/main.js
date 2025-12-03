@@ -5,7 +5,6 @@ ws.onmessage = (event) => {
     const item = document.createElement("li")
 
     item.textContent = msg.username + ": " + msg.message
-    saveMessage(item.textContent)
     document.getElementById("messages").appendChild(item)
 }
 
